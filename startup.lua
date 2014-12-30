@@ -25,7 +25,7 @@ function requiresUpdate(newestVersion)
 end
 
 -- MAIN UPDATE CODE
-local updateConfig = http.get("https://raw.github.com/Ulthean/MLG_Mining/master/updateList")
+local updateConfig = http.get("https://raw.githubusercontent.com/swisszeni/MLG_Mining/master/updateList")
 if not updateConfig then
   print("Error connecting to server")
   return false
