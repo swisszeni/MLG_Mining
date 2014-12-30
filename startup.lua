@@ -39,7 +39,6 @@ if not updateConfig then
   print("Error connecting to server")
   return false
 end
-printSoftwareInfo()
 local newestVersionInfo=splitString(updateConfig.readLine(), "=")[2]
 if requiresUpdate(newestVersionInfo) then
   -- BUILD THE LIST OF PROGRAMS TO UPDATE
@@ -62,11 +61,13 @@ if requiresUpdate(newestVersionInfo) then
   -- PROVIDE UPDATE INFO
   local impact=splitString(updateConfig.readLine(), "=")[2]
   local advise=splitString(updateConfig.readLine(), "=")[2]
+  printSoftwareInfo()
   print("UPDATE: PROGRAM UPDATED")
   print("IMPACT: "..impact)
   print("ADVISE: "..advise)
   print("---------------------------")
 else
+  printSoftwareInfo()
   print("UPDATE: NO UPDATE FOUND")
   print("---------------------------")
 end
