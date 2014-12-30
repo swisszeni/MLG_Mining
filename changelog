@@ -1,0 +1,25 @@
+version=1.0.2
+
+=============
+== CHANGES == 
+=============
+[1.0.2]
+- Fixed Bug causing scirpt to crash when a Mob or Player was in front of the turtle (caused by changes on the turtle API)
+
+[1.0.1]
+- Small Bugfix in api_sharedPrograms, which meant that using the programs with just one chest would not work
+
+[1.0]
+- Added an automatic updater for the programs
+- I suggest adding cobblestone as an ignore block too, I myself have replaced wood with cobblestone
+  in my default line-up of 6 items: "Smooth stone, dirt, gravel, cobblestone, marble, stone bricks"
+  If you don't do this in some very specific cases, where lava meets water in a certain way, the
+  turtle may or may not get stuck. Though the changes in the next two bullets solved some of the problems
+- The movement of the turtle got improved: this fixed some troubles people were having
+- Certain Obstructions will now be handled more elegantly
+- The turtle will now notify the user when it needs more torches (via its terminal) 
+- Torch restocking is now properly functioning
+- Torch placement is improved when using 'digSidesToo'
+- Torch placement got changed to avoid dark spots in the shafts: it will now place a torch every 6 block
+- Using the programs with just one chest should now work
+- General Debugging

@@ -204,8 +204,16 @@ end
 function attack(dir)
   turnTo(dir)
   local tDir=turnedDir(dir)
+  local attack
+  if dir==up then
+    attack=turtle.attackUp()
+  elseif dir==down then
+    attack=turtle.attackDown()
+  else
+    attack=turtle.attack()
+  end 
   local success
-  while turtle.attack(tDir) do
+  while attack() do
     success=true
     sleep(0.3)
   end
