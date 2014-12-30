@@ -206,11 +206,11 @@ function attack(dir)
   local tDir=turnedDir(dir)
   local attack
   if dir==up then
-    attack=turtle.attackUp()
+    attack=turtle.attackUp
   elseif dir==down then
-    attack=turtle.attackDown()
+    attack=turtle.attackDown
   else
-    attack=turtle.attack()
+    attack=turtle.attack
   end 
   local success
   while attack() do
