@@ -24,12 +24,22 @@ function requiresUpdate(newestVersion)
   return false
 end
 
+-- PRINTS THE BASIC SOFTWARE INFORMATION
+function printSoftwareInfo()
+  print("---------------------------")
+  print("MLG MINING - SWISS EDITION")
+  print("WRITTEN BY ULTHEAN")
+  print("ADDITIONS BY SWISSZENI")
+  print("---------------------------")
+end
+
 -- MAIN UPDATE CODE
 local updateConfig = http.get("https://raw.githubusercontent.com/swisszeni/MLG_Mining/master/updateList")
 if not updateConfig then
   print("Error connecting to server")
   return false
 end
+printSoftwareInfo()
 local newestVersionInfo=splitString(updateConfig.readLine(), "=")[2]
 if requiresUpdate(newestVersionInfo) then
   -- BUILD THE LIST OF PROGRAMS TO UPDATE
@@ -52,13 +62,11 @@ if requiresUpdate(newestVersionInfo) then
   -- PROVIDE UPDATE INFO
   local impact=splitString(updateConfig.readLine(), "=")[2]
   local advise=splitString(updateConfig.readLine(), "=")[2]
-  print("---------------------------")
-  print("MLG MINING: PROGRAM UPDATED")
+  print("UPDATE: PROGRAM UPDATED")
   print("IMPACT: "..impact)
   print("ADVISE: "..advise)
   print("---------------------------")
 else
-  print("---------------------------")
-  print("MLG MINING: NO UPDATE FOUND")
+  print("UPDATE: NO UPDATE FOUND")
   print("---------------------------")
 end
