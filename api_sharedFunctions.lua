@@ -132,7 +132,7 @@ local function printManual()
   print(" -oneChest       (=single drop chest)")
   print(" -rad <num>      (=center radius)")
   print(" -sides          (=dig out the sides)")
-  print(" -numIgnore <num>(=num ignore blocks)")
+  print(" -numIgnore <num>(=num ignore blocks, max 16)")
   print("PRESS ANY KEY TO CONTINUE")
   read()
   term.clear()
@@ -374,7 +374,12 @@ local function processCommandLine(configuration, args)
         printManual()
         return false
       end 
-      configuration.numIgnoreBlocks=tonumber(args[readParams+2])
+      local numIgnoreBlocks=tonumber(args[readParams+2])
+      if (numIgnoreBlocks > 16) then
+        printManual()
+        return false
+      end
+      configuration.numIgnoreBlocks=numIgnoreBlocks
       readParams=readParams+2
     elseif string.lower(args[readParams+1])=="-nofuel" then
       configuration.requiresFuel=false
@@ -457,6 +462,15 @@ local function processCommandLine(configuration, args)
 end
 
 
+-- VALIDATES THE CONFIGURATION TO CHECK THE DEPENDANT VALUES (NUMIGNORE ON TORCHES)
+local function validateConfig(configuration)
+  if (configuration.placeTorches and configuration.numIgnoreBlocks > 15) then
+    return false
+  end
+  return true
+end
+
+
 -- RETURNS THE CONFIGURATION OF THE PROGRAM, ACCOUNTING FOR THE CONFIG FILE AND THE COMMAND LINE ARGUMENTS
 function getConfig(filename, args)
   local configuration=getDefaultConfig()
@@ -466,6 +480,10 @@ function getConfig(filename, args)
   end
   -- TRY TO PROCESS THE COMMAND LINE ARGUMENTS, ABORT IF THIS FAILS (THE RETURN VALUE IS FALSE)
   if not processCommandLine(configuration, args) then
+    return nil
+  end
+  -- NOW THAT THE FINAL CONFIGURATION IS GATHERED, VALIDATE IT
+  if not validateConfig(configuration) then
     return nil
   end
   return configuration
@@ -721,6 +739,18 @@ function reportObstruction(configuration, dir)
   print(" LEV: "..configuration.currentL)
   print(" TUN: "..configuration.currentT)
   print(" SH : "..configuration.currentS.." ("..dir..")")
+end
+
+
+-- RETURNS THE CURRENT VERSION OF THE OS (CraftOS)
+function getOSVersion()
+  return tonumber(splitString(os.version(), " ")[2])
+end
+
+
+-- RETURNS IF THE VERSION OF THE OS (CraftOS) IS ATLEAST THE GIVEN
+function OSVersionIsAtleast(osVersion)
+  return getOSVersion >= osVersion
 end
 
 -- ------------------------------------------------ --
