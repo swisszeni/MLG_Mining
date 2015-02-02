@@ -132,7 +132,7 @@ local function printManual()
   print(" -oneChest       (=single drop chest)")
   print(" -rad <num>      (=center radius)")
   print(" -sides          (=dig out the sides)")
-  print(" -numIgnore <num>(=num ignore blocks, max 16)")
+  print(" -numIgnore <num>(=num ignore blocks)")
   print("PRESS ANY KEY TO CONTINUE")
   read()
   term.clear()
@@ -376,7 +376,7 @@ local function processCommandLine(configuration, args)
       end 
       local numIgnoreBlocks=tonumber(args[readParams+2])
       if (numIgnoreBlocks > 16) then
-        printManual()
+        print("Maximum 16 ignore blocks allowed")
         return false
       end
       configuration.numIgnoreBlocks=numIgnoreBlocks
@@ -465,6 +465,7 @@ end
 -- VALIDATES THE CONFIGURATION TO CHECK THE DEPENDANT VALUES (NUMIGNORE ON TORCHES)
 local function validateConfig(configuration)
   if (configuration.placeTorches and configuration.numIgnoreBlocks > 15) then
+    print("With torches enabled, maximum 15 ignore blocks allowed")
     return false
   end
   return true
