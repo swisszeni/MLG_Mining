@@ -90,7 +90,7 @@ end
 
 -- RETURNS IF THE VALUE OF A GIVEN PARAMETER IS A BOOLEAN
 local function isBooleanInput(param)
-  if ((param=="placeTorches") or (param=="singleChest") or (param=="requiresFuel") or (param=="digSidesToo")) then
+  if ((param=="placeTorches") or (param=="singleChest") or (param=="requiresFuel") or (param=="digSidesToo") or (param=="ignoreAsBlacklist") or (param=="cacheIgnore")) then
     return true
   else
     return false
@@ -138,6 +138,8 @@ local function printManual()
   term.clear()
   print("Command Line Arguments (3/3)")
   print("----------------------------")
+  print(" -storeIgnore    (=store ign blocks)")
+  print(" -whitelist      (=mine only ignore)")
   print(" -noFuel         (=no need for fuel)")
   print(" -depFuel <num>  (=departure fuel)")
   print(" -retFuel <num>  (=return fuel)")
@@ -146,8 +148,6 @@ local function printManual()
   print(" -torchS <dir>   (=torch suck dir)")
   print(" -itemD <dir>    (=item drop dir)")
   print(" -ignoreS <dir>  (=ignore block dir)")
-  print("")
-  print("")
 end
 
 -- PRINTS THE POSSIBLE DIRECTION VALUES TO THE TERMINAL
@@ -206,6 +206,10 @@ local function getDefaultConfig()
   -- THE NUMBER OF BLOCK TYPES THE TURTLE WILL _NOT_ DIG UNLESS NEEDED
   -- DEFAULT CONSIDERS: Smooth stone, Dirt, Gravel, Marble (Tekkit), Wood, stone bricks
   configuration.numIgnoreBlocks=6
+  -- DOES THE TURTLE ONLY MINE BLOCKS NOT MATCHING THE STORED TYPES
+  configuration.ignoreAsBlacklist=true
+  -- ARE THE IGNORE BLOCK STORED IN CACHE
+  configuration.cacheIgnore=true
   -- DOES THE TURTLE REQUIRE FUEL TO OPERATE?
   configuration.requiresFuel=true
   -- THE AMOUNT OF FUEL THE TURTLE WILL STORE BEFORE HEADING OF TO A SHAFT
@@ -381,6 +385,12 @@ local function processCommandLine(configuration, args)
       end
       configuration.numIgnoreBlocks=numIgnoreBlocks
       readParams=readParams+2
+    elseif string.lower(args[readParams+1])=="-storeIgnore" then
+      configuration.cacheIgnore=false
+      readParams=readParams+1
+    elseif string.lower(args[readParams+1])=="-whitelist" then
+      configuration.ignoreAsBlacklist=false
+      readParams=readParams+1
     elseif string.lower(args[readParams+1])=="-nofuel" then
       configuration.requiresFuel=false
       readParams=readParams+1
@@ -462,10 +472,14 @@ local function processCommandLine(configuration, args)
 end
 
 
--- VALIDATES THE CONFIGURATION TO CHECK THE DEPENDANT VALUES (NUMIGNORE ON TORCHES)
+-- VALIDATES THE CONFIGURATION TO CHECK THE DEPENDANT VALUES (NUMIGNORE ON TORCHES) OR CASESPECIFIC VALUES (IGNORELIST CACHING IN RELATION TO OS VERSION)
 local function validateConfig(configuration)
   if (configuration.placeTorches and configuration.numIgnoreBlocks > 15) then
     print("With torches enabled, maximum 15 ignore blocks allowed")
+    return false
+  end
+  if (configuration.cacheIgnore and not OSVersionIsAtleast(1.6)) then
+    print("Storing the ignorelist of blocks in cache requires CraftOS 1.6 or higher")
     return false
   end
   return true

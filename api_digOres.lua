@@ -32,7 +32,7 @@ function excavateShaft(configuration, dir)
   api_turtleExt.digAndMove(down, 1, 0)
   api_turtleExt.turnTo(back)
   checkSides(configuration, down)
-  for i=1,squaresMoved do
+  for i=1,squaresMoved-1 do
     if configuration.placeTorches and (squaresMoved%6==5) then
       api_turtleExt.place(up, 1)
     end
@@ -87,24 +87,53 @@ function check(configuration, dir)
   api_turtleExt.turnFrom(dir)
 end
 
--- CHECKS IF A BLOCK IN A CERTAIN DIRECTION IS SPECIAL (NOT ONE OF THE REFERENCE COMPONENTS (DIRT ETC))
+-- CHECKS IF A BLOCK IN A CERTAIN DIRECTION IS SPECIAL (NOT ONE OF THE REFERENCE COMPONENTS (DIRT ETC) WHEN IN BLACKLIST MODE, OTHERWISE VICE VERSA)
 function isSpecial(configuration, dir)
+  local special
   api_turtleExt.turnTo(dir)
   local tDir=api_turtleExt.turnedDir(dir)
+  if not api_turtleExt.detect(tDir) then
+    return false
+  end
+  if configuration.cacheIgnore then
+    special = isSpecialCached(configuration, tDir)
+  else
+    special = isSpecialLegacy(configuration, tDir)
+  end
+  
+  -- REVERSE WHEN IN WHITELIST MODE
+  if not configuration.ignoreAsBlacklist then
+    special = not special
+  end
+  
+  api_turtleExt.turnFrom(dir)
+  return special
+end
+
+-- CHECKS IF A BLOCK IS SPECIAL BY COMPARING TO ITEM IN INVENTORY
+local function isSpecialLegacy(configuration, tDir)
   local torchSlot=0
   if configuration.placeTorches then
     torchSlot=1
   end
-  if not api_turtleExt.detect(tDir) then
-    return false
-  end
+  
   for i=1, configuration.numIgnoreBlocks+torchSlot do
     if api_turtleExt.compare(tDir, i) then
-      api_turtleExt.turnFrom(dir)
       return false
     end
   end
-  api_turtleExt.turnFrom(dir)
+  return true
+end
+
+-- CHECKS IF A BLOCK IS SPECIAL BY COMPARING TO CACHED ITEM NAME
+local function isSpecialCached(configuration, tDir)
+  local name = api_turtleExt.inspectName(tDir)
+  local specialBlocks = configuration.ignoreBlocks
+  for i = 1, #specialBlocks do
+    if specialBlocks[i] == name then
+      return false
+    end
+  end
   return true
 end
 

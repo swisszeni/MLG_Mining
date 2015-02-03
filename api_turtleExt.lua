@@ -271,6 +271,28 @@ function compare(dir, slot)
   return same
 end
 
+-- RETRIEVES THE IDENTIFIER NAME OF A BLOCK IN A CERTAIN DIRECTION
+-- REQUIRES COMPUTERCRAFT 1.64 OR HIGHER
+function inspectName(dir)
+  local name = ""
+  local inspect
+  turnTo(dir)
+  local tDir=turnedDir(dir)
+  if tDir==forward then
+    inspect = turtle.inspect
+  elseif tDir==up then
+    inspect = turtle.inspectUp
+  elseif tDir==down then
+    inspect = turtle.inspectDown
+  end
+  local success, data = inspect()
+  if success then
+    name = data.name
+  end
+  turnFrom(dir)
+  return name
+end
+
 -- COMPARES A BLOCK IN A CERTAIN DIRECTION TO A CERTAIN INVENTORY SLOT
 -- IF IT MATCHES THE BLOCK WILL BE REPLACED BY A BLOCK IN THE SPECIFIED SLOT
 function compareAndReplace(dir, compareSlot, replaceSlot)
