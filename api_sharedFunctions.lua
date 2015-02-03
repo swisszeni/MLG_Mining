@@ -380,6 +380,7 @@ local function processCommandLine(configuration, args)
       end 
       local numIgnoreBlocks=tonumber(args[readParams+2])
       if (numIgnoreBlocks > 16) then
+        print("Error:")
         print("Maximum 16 ignore blocks allowed")
         return false
       end
@@ -475,11 +476,15 @@ end
 -- VALIDATES THE CONFIGURATION TO CHECK THE DEPENDANT VALUES (NUMIGNORE ON TORCHES) OR CASESPECIFIC VALUES (IGNORELIST CACHING IN RELATION TO OS VERSION)
 local function validateConfig(configuration)
   if (configuration.placeTorches and configuration.numIgnoreBlocks > 15) then
+    print("Error:")
     print("With torches enabled, maximum 15 ignore blocks allowed")
     return false
   end
   if (configuration.cacheIgnore and not OSVersionIsAtleast(1.6)) then
-    print("Storing the ignorelist of blocks in cache requires CraftOS 1.6 or higher")
+    print("Error:")
+    print("Storing the ignorelist of blocks in cache requires CraftOS 1.6 or higher.")
+    print("")
+    print("Use the -storeIgnore parameter to disable caching")
     return false
   end
   return true
