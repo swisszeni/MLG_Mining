@@ -32,7 +32,12 @@ function excavateShaft(configuration, dir)
   api_turtleExt.digAndMove(down, 1, 0)
   api_turtleExt.turnTo(back)
   checkSides(configuration, down)
-  for i=1,squaresMoved-1 do
+  -- IF TORCHES ARE PLACED AND SIDES NOT DIGGED, GO UP 1 BLOCK EARLYER TO PREVENT DESTROYING THE TORCH IN THE TUNNEL
+  local floorSteps = squaresMoved
+  if configuration.placeTorches and not configuration.digSidesToo then
+    floorSteps = floorSteps-1
+  end
+  for i=1,floorSteps do
     if configuration.placeTorches and (squaresMoved%6==5) then
       api_turtleExt.place(up, 1)
     end
