@@ -133,6 +133,11 @@ end
 -- CHECKS IF A BLOCK IS SPECIAL BY COMPARING TO CACHED ITEM NAME
 local function isSpecialCached(configuration, tDir)
   local name = api_turtleExt.inspectName(tDir)
+  -- SPECIAL HANDLING FOR BEDROCK SINCE THIS BLOCK CAN'T BE ADDED TO THE LIST BY THE PLAYER (ANT SHALL ALWAYS BE IGNORED)
+  if name == "minecraft:bedrock" then
+    return not configuration.ignoreAsBlacklist
+  end
+  -- LOOP THE CACHED SPECIAL BLOCKS
   local specialBlocks = configuration.ignoreBlocks
   for i = 1, #specialBlocks do
     if specialBlocks[i] == name then
